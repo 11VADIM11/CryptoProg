@@ -18,23 +18,18 @@ int main(int argc, char* argv[]) {
     const char *filename = argv[1];
 
     // Переменные для хранения хэша
-    string hashMsg;
+    byte hash[Weak::MD5::DIGESTSIZE]; // Массив для хранения значений хэша
 
     // Используем FileSource для чтения содержимого файла
     try {
         // Создание объекта MD5
-        Weak::MD5 hash;
+        Weak::MD5 md5;
 
         // Чтение файла и обновление хэша
         FileSource fileSource(
             filename, true,
-            new HashFilter(hash, new StringSink(hashMsg))
+            new HashFilter(md5, new ArraySink(hash, sizeof(hash)))
         );
-
-        // Получаем размер хэша
-        hashMsg.resize(hash.DigestSize());
-        hash.Final((byte *)&hashMsg[0]);
-
     } catch (const Exception &e) {
         cerr << "Ошибка при чтении файла: " << e.what() << endl;
         return 1;
@@ -42,10 +37,11 @@ int main(int argc, char* argv[]) {
 
     // Кодирование хэша в шестнадцатеричном формате
     string encodedHash;
-    StringSource(hashMsg, true, new HexEncoder(new StringSink(encodedHash)));
+    StringSource(hash, sizeof(hash), true, new HexEncoder(new StringSink(encodedHash)));
 
     // Вывод результата
     cout << "Text HASH: " << encodedHash << endl;
 
     return 0;
 }
+
