@@ -1,4 +1,4 @@
-#include <cryptopp/sha.h>
+#include <cryptopp/md5.h>
 #include <cryptopp/hex.h>
 #include <cryptopp/files.h>
 #include <iostream>
@@ -30,9 +30,9 @@ int main(int argc, char* argv[]) {
 
     try {
         
-        CryptoPP::SHA256 sha;
+        CryptoPP::MD5 md5;
         CryptoPP::StringSource(file_content, true,
-            new CryptoPP::HashFilter(sha,
+            new CryptoPP::HashFilter(md5,
                 new CryptoPP::HexEncoder(
                     new CryptoPP::StringSink(hash), false 
                 )
@@ -47,3 +47,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
