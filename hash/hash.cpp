@@ -1,51 +1,45 @@
-#include <cryptopp/md5.h>
-#include <cryptopp/hex.h>
+#include <cryptopp/cryptlib.h>
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include <cryptopp/files.h>
+#include <cryptopp/hex.h>
+#include <cryptopp/md5.h>
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 
-int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
-        return 1;
-    }
+using namespace CryptoPP;
+using namespace std;
 
-    std::string filename = argv[1];
-    std::string file_content;
-    std::string hash;
+int main() {
+  // Путь к файлу для хэширования
+  const char *filename = "/home/23ptv206@ibst.psu/CryptoProg/hash/text";
 
-    
-    std::ifstream file(filename, std::ios::binary);
-    if (file) {
-        std::ostringstream ss;
-        ss << file.rdbuf(); 
-        file_content = ss.str();
-        file.close();
-    } else {
-        std::cerr << "Error reading file: " << filename << std::endl;
-        return 1;
-    }
+  // Переменные для хранения хэша
+  string hashMsg;
 
-    try {
-        
-        CryptoPP::MD5 md5;
-        CryptoPP::StringSource(file_content, true,
-            new CryptoPP::HashFilter(md5,
-                new CryptoPP::HexEncoder(
-                    new CryptoPP::StringSink(hash), false 
-                )
-            )
-        );
+  // Используем FileSource для чтения содержимого файла
+  try {
+    // Создание объекта MD5
+    Weak::MD5 hash;
 
-        std::cout << "Hash: " << hash << std::endl;
-    } catch (const CryptoPP::Exception& e) {
-        std::cerr << e.what() << std::endl;
-        return 1;
-    }
+    // Чтение файла и обновление хэша
+    FileSource fileSource(
+        filename, true,
+        new HashFilter(hash, new HashFilter(hash, new StringSink(hashMsg))));
 
-    return 0;
+    // Получаем размер хэша
+    hashMsg.resize(hash.DigestSize());
+    hash.Final((byte *)&hashMsg[0]);
+
+  } catch (const Exception &e) {
+    cerr << "Ошибка при чтении файла: " << e.what() << endl;
+    return 1;
+  }
+
+  // Кодирование хэша в шестнадцатеричном формате
+  string encodedHash;
+  StringSource(hashMsg, true, new HexEncoder(new StringSink(encodedHash)));
+
+  // Вывод результата
+  cout << "Text HASH: " << encodedHash << endl;
+
+  return 0;
 }
-
