@@ -1,15 +1,14 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -I/usr/local/include
-LDFLAGS = -L/usr/local/lib -lcryptopp
-TARGET = md5_hash
-SRC = main.cpp
+CXXFLAGS = -g -Wall -std=c++11
+LDFLAGS = -lcryptopp
+
+TARGET = test
+SRCS = main.cpp
 
 all: $(TARGET)
 
-$(TARGET): $(SRC)
- $(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+$(TARGET): $(SRCS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS) $(LDFLAGS)
 
 clean:
- rm -f $(TARGET)
-
-.PHONY: all clean
+	rm -f $(TARGET)
