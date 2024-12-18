@@ -2,8 +2,8 @@ CXX = g++
 CXXFLAGS = -g -Wall -std=c++11
 LDFLAGS = -lcryptopp
 
-TARGET = test
-SRCS = main.cpp
+TARGET = hash
+SRCS = hash.cpp
 
 all: $(TARGET)
 
